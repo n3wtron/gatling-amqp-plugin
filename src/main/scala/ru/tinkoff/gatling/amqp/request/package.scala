@@ -16,6 +16,9 @@ package object request {
   case class AmqpDirectExchange(name: Expression[String], routingKey: Expression[String], durable: Boolean = false)
       extends AmqpExchange
 
+  case class AmqpFanoutExchange(name: Expression[String], durable: Boolean = false)
+      extends AmqpExchange
+
   case class AmqpQueueExchange(name: Expression[String], durable: Boolean = false) extends AmqpExchange
 
   sealed trait AmqpMessage {

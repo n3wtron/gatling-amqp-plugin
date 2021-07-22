@@ -53,6 +53,7 @@ class RequestReply(
       case AmqpDirectExchange(name, _, _) => name(session)
       case AmqpQueueExchange(name, _)     => name(session)
       case AmqpTopicExchange(name, _, _) => name(session)
+      case AmqpFanoutExchange(name, _) => name(session)
     }
 
 }

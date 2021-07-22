@@ -1,10 +1,11 @@
 package ru.tinkoff.gatling.amqp.client
 
 import io.gatling.core.session.Session
+
 import javax.jms.DeliveryMode
 import ru.tinkoff.gatling.amqp.action.Around
 import ru.tinkoff.gatling.amqp.protocol.AmqpComponents
-import ru.tinkoff.gatling.amqp.request.{AmqpDirectExchange, AmqpTopicExchange, AmqpExchange, AmqpProtocolMessage, AmqpQueueExchange}
+import ru.tinkoff.gatling.amqp.request.{AmqpDirectExchange, AmqpExchange, AmqpFanoutExchange, AmqpProtocolMessage, AmqpQueueExchange, AmqpTopicExchange}
 
 import scala.collection.JavaConverters._
 
@@ -37,6 +38,14 @@ class AmqpPublisher(destination: AmqpExchange, components: AmqpComponents) exten
         } withChannel { channel =>
           channel.exchangeDeclare(exName, "topic", durable || protocolDurable)
           around(channel.basicPublish(exName, exKey, message.amqpProperties, message.payload))
+        }
+
+      case AmqpFanoutExchange(name, durable) =>
+        for {
+          exName <- name(session)
+        } withChannel { channel =>
+          channel.exchangeDeclare(exName, "fanout", durable || protocolDurable)
+          around(channel.basicPublish(exName, "", message.amqpProperties, message.payload))
         }
     }
   }
